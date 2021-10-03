@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Competition;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CompetitionController;
 
 /*
 |--------------------------------------------------------------------------

@@ -16,7 +16,7 @@ class CreateCompetitionsTable extends Migration
         Schema::create('competitions', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->integer('player_limit');
+            $table->unsignedBigInteger('player_limit');
             $table->timestamps();
         });
     }

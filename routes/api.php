@@ -17,24 +17,10 @@ use App\Http\Controllers\CompetitionPlayerIncrementController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('/competitions', [CompetitionController::class, 'store']);
 
 Route::post('/competitions/{competition}/players', [CompetitionPlayerController::class, 'store']);
 
-Route::post('/competitions/{competition}/players/{player}', [CompetitionPlayerIncrementController::class, 'store']);
+Route::put('/competitions/{competition}/players/{player}/increment', [CompetitionPlayerController::class, 'increment']);
 
-Route::get('/competitions/{competition}/players', [CompetitionPlayerIncrementController::class, 'index']);
-
-//
-
-
-// Route::post('/competitions', function (Request $request) {
-//     return $request->input();
-// });
-
-//postman sau insomnia
-
+Route::get('/competitions/{competition}', [CompetitionController::class, 'show']);

@@ -13,19 +13,11 @@ class CompetitionPlayerController extends Controller
 {
     public function store(Competition $competition, Request $request)
     {
-        // verify the competition and the player limit
-        if($competition->players()->count() >= $competition->player_limit) {
-            // player cannot join the competition
-            return response()->json(
-                [
-                    "message" => "Player limit reached",
-                    "status" => "error"
-                ]
-            );
-        }
+        // verify the competition limit
+        $competition->canTakeMorePlayers();
 
         // verify player's name
-        $validation = Validator::make($request->all(),[
+        $validation = Validator::make($request->all(), [
             'name' => [
                 'required',
                 'max:255',
@@ -38,68 +30,48 @@ class CompetitionPlayerController extends Controller
 
         //  if validation fails
         if ($validation->fails()) {
-            $errors = $validation->errors();
-
-            return response()->json(
-                [
-                    "errors" => $errors,
-                    "message" => "Error, player validation fails",
-                    "status" => "success"
-                ]
-            );
-
+            return response()->json([
+                "errors" => $validation->errors(),
+                "message" => "Validation errors",
+                "status" => "error"
+            ]);
         }
 
         // create player + sync with competition
         $player = $competition->players()->create($request->input());
 
-        return response()->json(
-            [
-                "message" => "Success, player joined this competition",
-                "status" => "success",
-                "player" => $player
-            ]
-        );
+        return response()->json([
+            "message" => "Player joined",
+            "status" => "success",
+            "player" => $player
+        ]);
     }
 
     public function increment(Competition $competition, Player $player, Request $request)
     {
-        $validation = Validator::make($request->all(),[
+        $validation = Validator::make($request->all(), [
             'name' => 'required|exists:players',
         ]);
 
         //  if validation fails
         if ($validation->fails()) {
-            $errors = $validation->errors();
-
             return response()->json([
-                "errors" => $errors,
-                "message" => "Error, validation fails",
+                "errors" => $validation->errors(),
+                "message" => "Validation error",
                 "status" => "error"
             ]);
         }
 
         // verify if player is on this competition
-        if($player->competitions()->where('id', $competition->id)->doesntExist()) {
-            // no player on this competition
-            return response()->json(
-                [
-                    "message" => "Error, no such user on this competition",
-                    "status" => "error",
-                ]
-            );
-        }
+        $competition->hasPlayer($player);
 
         // increment player's score
-        $playerScore = $competition->players()->where('id', $player->id)->first()->pivot->increment('player_score', 1);
+        $playerScore = $player->incrementScore($competition);
 
-        return response()->json(
-            [
-                "message" => "Success, player's score points is updated",
-                "status" => "success",
-                "playerScore" => $playerScore
-                ]
-            );
+        return response()->json([
+            "message" => "Player score incremented",
+            "status" => "success",
+            "playerScore" => $playerScore
+        ]);
     }
-
 }

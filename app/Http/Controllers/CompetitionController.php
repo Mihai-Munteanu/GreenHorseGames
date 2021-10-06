@@ -24,7 +24,7 @@ class CompetitionController extends Controller
 
             return response()->json([
                 "errors" => $errors,
-                "message" => "Error, validation fails",
+                "message" => "Validation errors",
                 "status" => "error"
             ]);
         }
@@ -32,26 +32,21 @@ class CompetitionController extends Controller
         // create competition
         $competition = Competition::create($request->input());
 
-        return response()->json(
-            [
-                "message" => "Success, the competitions was created!",
-                "status" => "success",
-                "competition" => $competition
-            ]
-        );
+        return response()->json([
+            "message" => "Competitions was created!",
+            "status" => "success",
+            "competition" => $competition
+        ]);
     }
 
     public function show(Competition $competition)
     {
         // get all players within this competition, paginated by two per page
-        $playersOnCompetition = $competition->players()->orderByDesc('player_score')->paginate(2);
+        $playersOnCompetition = $competition->players()->orderByDesc('player_score')->paginate(10);
 
-        return response()->json(
-            [
-                "playersOnCompetition" => $playersOnCompetition,
-                "message" => "Show all players from this competition",
-                "status" => "success"
-            ]
-        );
+        return response()->json([
+            "data" => $playersOnCompetition,
+            "status" => "success"
+        ]);
     }
 }

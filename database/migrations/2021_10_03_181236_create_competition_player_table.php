@@ -16,7 +16,7 @@ class CreateCompetitionPlayerTable extends Migration
         Schema::create('competition_player', function (Blueprint $table) {
             $table->foreignId('competition_id')->index()->constrained();
             $table->foreignId('player_id')->index()->constrained();
-            $table->unsignedBigInteger('player_score')->nullable();
+            $table->unsignedBigInteger('player_score')->default(0);
         });
     }
 

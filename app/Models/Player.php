@@ -16,4 +16,11 @@ class Player extends Model
         return $this->belongsToMany(Competition::class)
             ->withPivot('player_score');
     }
+
+    public function incrementScore($competition)
+    {
+        $competition->players()->where('id', $this->id)->first()->pivot->increment('player_score', 1);
+
+        return $competition->players()->where('id', $this->id)->first()->pivot->player_score;
+    }
 }

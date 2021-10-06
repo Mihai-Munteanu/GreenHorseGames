@@ -18,9 +18,7 @@ use App\Http\Controllers\CompetitionPlayerIncrementController;
 */
 
 Route::post('/competitions', [CompetitionController::class, 'store']);
-
+Route::get('/competitions/{competition}', [CompetitionController::class, 'show']);
 Route::post('/competitions/{competition}/players', [CompetitionPlayerController::class, 'store']);
-
 Route::put('/competitions/{competition}/players/{player}/increment', [CompetitionPlayerController::class, 'increment']);
 
-Route::get('/competitions/{competition}', [CompetitionController::class, 'show']);
